@@ -3,29 +3,6 @@ import Toaster from ".";
 import Forms from "../Forms"
 import { render, screen, fireEvent } from '@testing-library/react';
 
-// Simulation du localStorage pour tester les interactions qui dépendent de celui-ci
-const mockLocalStorage = (() => {
-    let store = {};
-    return {
-        getItem: jest.fn((key) => store[key] || null),
-        setItem: jest.fn((key, value) => {
-            store[key] = value.toString();
-        }),
-        removeItem: jest.fn((key) => {
-            delete store[key];
-        }),
-        clear: jest.fn(() => {
-            store = {};
-        }),
-    };
-})();
-
-// Réinitialise le localStorage simulé avant chaque test
-beforeEach(() => {
-    global.localStorage = mockLocalStorage;
-    mockLocalStorage.clear();
-});
-
 describe('Toaster', () => {
     // Vérifie que le composant Toaster se rend correctement sans erreur
     it('renders without error', () => {

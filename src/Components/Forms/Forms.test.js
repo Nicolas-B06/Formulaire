@@ -3,6 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import Forms from '.';
 
 describe('Forms Component', () => {
+
   // Vérifie que le bouton est initialement désactivé lors du rendu du composant Forms
   test('button should be initially disabled', () => {
     render(<Forms />);
@@ -37,17 +38,53 @@ describe('Forms Component', () => {
     fireEvent.change(inputs[4], { target: { value: 'Antibes' } });
     fireEvent.change(inputs[5], { target: { value: '06600' } });
 
-    // Add code to render the CloseIcon component
     const button = screen.getByRole('button', { name: /enregistrer/i });
-    fireEvent.click(button); // Simulate a form submission
-    
+    fireEvent.click(button); // Simule une soumission de formulaire
+
     const closeIcon = screen.getByTestId('CloseIcon');
-    fireEvent.click(closeIcon); // Simulate a click on the close button
+    fireEvent.click(closeIcon); // simule un click sur le bouton de fermeture du toaster
 
     await waitFor(() => {
-      expect(screen.queryByRole('alert')).not.toBeInTheDocument(); // Verify that the toaster has been closed
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument(); // vérifie que le toaster n'est plus affiché
     });
   });
 
+  // Tester la sauvegarde des données utilisateur dans le localStorage lors d'une soumission réussie
+  it('should save user data to localStorage on successful submission', async () => {
+    render(<Forms />);
+    
+    // Remplir tous les champs du formulaire avec des valeurs valides
+    const inputs = screen.getAllByRole('textbox');
+    fireEvent.change(inputs[0], { target: { value: 'Jean' } });
+    fireEvent.change(inputs[1], { target: { value: 'Dupont' } });
+    fireEvent.change(inputs[2], { target: { value: 'email@example.com' } });
+    fireEvent.change(inputs[3], { target: { value: '23/08/1993' } });
+    fireEvent.change(inputs[4], { target: { value: 'Antibes' } });
+    fireEvent.change(inputs[5], { target: { value: '06600' } });
+  
+    // Soumettre le formulaire
+    fireEvent.submit(screen.getByText('Enregistrer'));
+
+    // Attendre un indicateur de soumission réussie 
+    await screen.findByText('Inscription réussie !');
+
+    // Vérifier que les données ont été sauvegardées dans le localStorage
+    const userData = localStorage.getItem('userData');
+    expect(userData).not.toBeNull();
+
+    const parsedData = JSON.parse(userData);
+    expect(parsedData).toEqual(expect.objectContaining({
+      nom: 'Jean',
+      prenom: 'Dupont',
+      email: 'email@example.com',
+      dateNaissance: '23/08/1993',
+      ville: 'Antibes',
+      codePostal: '06600',
+    }));
+  
+    // Nettoyer le localStorage après le test pour éviter les interférences entre les tests
+    localStorage.clear();
+  });
 });
+
 
