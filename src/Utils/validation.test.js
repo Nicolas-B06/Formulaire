@@ -1,4 +1,4 @@
-import { calculateAge, isOver18, isValidFrenchPostalCode, isValidName, isValidEmail } from './validation';
+import { calculateAge, isOver18, isValidFrenchPostalCode, isValidName, isValidEmail, isValidDate } from './validation';
 
 describe('validations functions', () => {
 
@@ -7,7 +7,7 @@ describe('validations functions', () => {
     const today = new Date();
     const birthDate = `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear() - 20}`;
     expect(calculateAge(birthDate)).toBe(20);
-  }); 
+  });
 
   // Teste calculateAge pour s'assurer qu'elle gère correctement les anniversaires plus tard dans le mois courant
   test('calculateAge should correctly handle birthdays later in the current month', () => {
@@ -16,7 +16,7 @@ describe('validations functions', () => {
     const futureMonth = today.getDate() < 28 ? today.getMonth() + 1 : today.getMonth() + 2;
     const birthDateThisMonth = `${futureDay}/${futureMonth}/${today.getFullYear() - 18}`;
     expect(calculateAge(birthDateThisMonth)).toBe(17);
-  }); 
+  });
 
   // Teste la fonction isOver18 pour confirmer qu'elle valide correctement si une personne est majeure
   test('isOver18 should validate age correctly', () => {
@@ -47,5 +47,17 @@ describe('validations functions', () => {
   test('isValidEmail should validate emails correctly', () => {
     expect(isValidEmail('email@example.com')).toBeTruthy();
     expect(isValidEmail('not-an-email')).toBeFalsy();
+  });
+
+  // Teste isValidDate pour s'assurer qu'elle valide correctement les dates
+  test('isValidDate should validate dates correctly', () => {
+    expect(isValidDate('23/08/1993')).toBeTruthy();
+    expect(isValidDate('32/13/2022')).toBeFalsy();
+  });
+
+  // Teste le cas du 29 février pour s'assurer qu'il est correctement validé pour les années bissextiles
+  test('isValidDate should validate leap year correctly', () => {
+    expect(isValidDate('29/02/2020')).toBeTruthy();
+    expect(isValidDate('29/02/2021')).toBeFalsy();
   });
 });

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, TextField, Grid, Container, Typography } from '@mui/material';
 import Toast from '../Toaster';
-import { isOver18, isValidFrenchPostalCode, isValidName, isValidEmail } from '../../Utils/validation';
+import { isOver18,isValidDate, isValidFrenchPostalCode, isValidName, isValidEmail } from '../../Utils/validation';
 
 const Forms = () => {
     // État pour stocker les erreurs de validation des champs
@@ -59,7 +59,8 @@ const Forms = () => {
         if (!isValidName(userData.nom)) errors.nom = 'Nom invalide.';
         if (!isValidName(userData.prenom)) errors.prenom = 'Prénom invalide.';
         if (!isValidEmail(userData.email)) errors.email = 'Email invalide.';
-        if (!isOver18(userData.dateNaissance)) errors.dateNaissance = 'Vous devez avoir plus de 18 ans.';
+        if (!isValidDate(userData.dateNaissance)) errors.dateNaissance = 'Date de naissance invalide format requis JJ/MM/AAAA.';
+        if (isValidDate(userData.dateNaissance) && !isOver18(userData.dateNaissance)) errors.dateNaissance = 'Vous devez avoir plus de 18 ans.';
         if (!isValidName(userData.ville)) errors.ville = 'Ville invalide.';
         if (!isValidFrenchPostalCode(userData.codePostal)) errors.codePostal = 'Code postal invalide.';
         return errors;

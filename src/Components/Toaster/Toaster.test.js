@@ -54,6 +54,9 @@ describe('Toaster', () => {
         fireEvent.submit(screen.getByText('Enregistrer'));
 
         // Vérifie l'affichage de la notification de succès
-        expect(await screen.findByRole('alert')).toHaveTextContent('Inscription réussie !');
+        // expect(await screen.findByRole('alert')).toHaveTextContent('Inscription réussie !');
+        expect(screen.getByRole('alert')).toHaveTextContent('Inscription réussie !');
+
+        localStorage.clear();
     });
 });

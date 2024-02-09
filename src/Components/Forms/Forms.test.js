@@ -26,8 +26,8 @@ describe('Forms Component', () => {
     const button = screen.getByRole('button', { name: /enregistrer/i });
     expect(button).not.toBeDisabled();
   });
-  // Teste la fermeture du toaster lorsque l'utilisateur clique en dehors
-  test('toaster should close when handleClose is triggered with a reason other than clickaway', async () => {
+  // Teste la fermeture du toaster lorsque l'utilisateur clique sur la fermeture
+  test('toaster should close when handleClose is triggered', async () => {
     render(<Forms />);
 
     const inputs = screen.getAllByRole('textbox');
@@ -52,7 +52,7 @@ describe('Forms Component', () => {
   // Tester la sauvegarde des données utilisateur dans le localStorage lors d'une soumission réussie
   it('should save user data to localStorage on successful submission', async () => {
     render(<Forms />);
-    
+
     // Remplir tous les champs du formulaire avec des valeurs valides
     const inputs = screen.getAllByRole('textbox');
     fireEvent.change(inputs[0], { target: { value: 'Jean' } });
@@ -61,7 +61,7 @@ describe('Forms Component', () => {
     fireEvent.change(inputs[3], { target: { value: '23/08/1993' } });
     fireEvent.change(inputs[4], { target: { value: 'Antibes' } });
     fireEvent.change(inputs[5], { target: { value: '06600' } });
-  
+
     // Soumettre le formulaire
     fireEvent.submit(screen.getByText('Enregistrer'));
 
@@ -81,10 +81,86 @@ describe('Forms Component', () => {
       ville: 'Antibes',
       codePostal: '06600',
     }));
-  
+
     // Nettoyer le localStorage après le test pour éviter les interférences entre les tests
     localStorage.clear();
   });
+
+  // Vérifie que le formulaire est réinitialisé après une soumission réussie
+  it('should reset the form after successful submission', async () => {
+    render(<Forms />);
+
+    // Remplir tous les champs du formulaire avec des valeurs valides
+    const inputs = screen.getAllByRole('textbox');
+    fireEvent.change(inputs[0], { target: { value: 'Jean' } });
+    fireEvent.change(inputs[1], { target: { value: 'Dupont' } });
+    fireEvent.change(inputs[2], { target: { value: 'email@example.com' } });
+    fireEvent.change(inputs[3], { target: { value: '23/08/1993' } });
+    fireEvent.change(inputs[4], { target: { value: 'Antibes' } });
+    fireEvent.change(inputs[5], { target: { value: '06600' } });
+
+    // Soumettre le formulaire
+    fireEvent.submit(screen.getByText('Enregistrer'));
+
+    // Attendre un indicateur de soumission réussie
+    expect(screen.getByRole('alert')).toHaveTextContent('Inscription réussie !');
+
+    // Vérifier que le formulaire a été réinitialisé
+    expect(inputs[0]).toHaveValue('');
+    expect(inputs[1]).toHaveValue('');
+    expect(inputs[2]).toHaveValue('');
+    expect(inputs[3]).toHaveValue('');
+    expect(inputs[4]).toHaveValue('');
+    expect(inputs[5]).toHaveValue('');
+
+    // Nettoyer le localStorage après le test pour éviter les interférences entre les tests
+    localStorage.clear();
+  });
+
+  // vérifie si les messages d'erreur sont correctement affichés sous les input en cas de soumission échouée
+  it('should display error messages under inputs on failed submission', async () => {
+    render(<Forms />);
+    // Simule une saisie invalide pour l'email et soumet le formulaire
+    const inputs = screen.getAllByRole('textbox');
+    fireEvent.change(inputs[0], { target: { value: 'Je885an' } });
+    fireEvent.change(inputs[1], { target: { value: 'Dupont45' } });
+    fireEvent.change(inputs[2], { target: { value: 'example.com' } });
+    fireEvent.change(inputs[3], { target: { value: '230802005' } });
+    fireEvent.change(inputs[4], { target: { value: 'Antibes36' } });
+    fireEvent.change(inputs[5], { target: { value: '0660' } });
+    fireEvent.submit(screen.getByText('Enregistrer'));
+
+    // Vérifie l'affichage des messages d'erreur sous les champs correspondants
+    expect(await screen.findByText('Nom invalide.')).toBeInTheDocument();
+    expect(await screen.findByText('Prénom invalide.')).toBeInTheDocument();
+    expect(await screen.findByText('Email invalide.')).toBeInTheDocument();
+    expect(await screen.findByText('Date de naissance invalide format requis JJ/MM/AAAA.')).toBeInTheDocument();
+    expect(await screen.findByText('Ville invalide.')).toBeInTheDocument();
+    expect(await screen.findByText('Code postal invalide.')).toBeInTheDocument();
+
+    localStorage.clear();
+  });
+
+  // vérifie si le message d'erreur spécifique est affiché sous l'input dateNaissance si l'utilisateur est mineur
+  it('should display specific error message under dateNaissance input if user is under 18', async () => {
+    render(<Forms />);
+    // Remplit tous les champs du formulaire avec des valeurs valides
+    const inputs = screen.getAllByRole('textbox');
+    fireEvent.change(inputs[0], { target: { value: 'Jean' } });
+    fireEvent.change(inputs[1], { target: { value: 'Dupont' } });
+    fireEvent.change(inputs[2], { target: { value: 'email@example.com' } });
+    fireEvent.change(inputs[3], { target: { value: '23/08/2023' } });
+    fireEvent.change(inputs[4], { target: { value: 'Antibes' } });
+    fireEvent.change(inputs[5], { target: { value: '06600' } });
+
+    fireEvent.submit(screen.getByText('Enregistrer'));
+
+    // Vérifie l'affichage du message d'erreur spécifique
+    expect(await screen.findByText('Vous devez avoir plus de 18 ans.')).toBeInTheDocument();
+
+    localStorage.clear();
+  });
+
 });
 
 

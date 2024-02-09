@@ -30,6 +30,26 @@ export const isOver18 = (dateOfBirth) => {
 };
 
 /**
+ * Vérifie si une date est valide.
+ * 
+ * @param {string} date - La date à valider.
+ * @returns {boolean} True si la date est valide au format JJ/MM/YYYY, sinon false.
+ */
+export const isValidDate = (date) => {
+    const parts = date.split('/');
+    const day = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10);
+    const year = parseInt(parts[2], 10);
+
+    if (year < 1000 || year > 3000 || month === 0 || month > 12) {
+        return false;
+    }
+
+    const monthLength = [31, (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0 ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    return day > 0 && day <= monthLength[month - 1];
+};
+
+/**
  * Valide le format d'un code postal français, qui doit être composé de 5 chiffres.
  * 
  * @param {string} postalCode - Le code postal à valider.
