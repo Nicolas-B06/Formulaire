@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-nod@v2
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.nod-version }}
       - name: npm ci build and test
