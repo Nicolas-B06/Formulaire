@@ -32,6 +32,12 @@ jobs:
         with:
           path: build
           if-no-files-found: error
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        env:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: Nicolas-B06/Formulaire
+          
   deploy:
     environment:
       name: github-pages
@@ -45,3 +51,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
+  
