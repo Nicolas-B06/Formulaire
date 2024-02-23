@@ -33,7 +33,7 @@ jobs:
       - name: Update versionning
         run: |
           git config --global user.email "bernardnicolas06600@gmail.com"
-          git config --global user.name "Loïse Fenoll"
+          git config --global user.name "Nicolas BERNARD"
           npm version ${{env.GITHUB_VERSION_BUILD}}
           echo ${{env.GITHUB_VERSION_BUILD}} >> README.md
           git commit -a -m "new version ${{env.GITHUB_VERSION_BUILD}}"
