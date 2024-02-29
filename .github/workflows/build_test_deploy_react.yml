@@ -27,16 +27,16 @@ jobs:
           npm test
       # mets a jour la version du build avec le numéro de build construit à l'aide de l'id du worflow, du numéro d'écxecution et du nombre de tentatives
       - name: Set env
-      run: |
-        npm i -g semver
-        echo "GITHUB_VERSION_BUILD=$(echo $(semver 0.1.1 -i prerelease --preid ${{github.run_id}}-${{github.run_number}}-${{github.run_attempt}}))" >> $GITHUB_ENV
-    - name: Update versionning
-      run: |
-        git config --global user.email "loise.fenoll@ynov.com"
-        git config --global user.name "Loïse Fenoll"
-        npm version ${{env.GITHUB_VERSION_BUILD}}
-        echo ${{env.GITHUB_VERSION_BUILD}} >> README.md
-        git commit -a -m "new version ${{env.GITHUB_VERSION_BUILD}}"
+        run: |
+          npm i -g semver
+          echo "GITHUB_VERSION_BUILD=$(echo $(semver 0.1.1 -i prerelease --preid ${{github.run_id}}-${{github.run_number}}-${{github.run_attempt}}))" >> $GITHUB_ENV
+      - name: Update versionning
+        run: |
+          git config --global user.email "loise.fenoll@ynov.com"
+          git config --global user.name "Loïse Fenoll"
+          npm version ${{env.GITHUB_VERSION_BUILD}}
+          echo ${{env.GITHUB_VERSION_BUILD}} >> README.md
+          git commit -a -m "new version ${{env.GITHUB_VERSION_BUILD}}"
       - name: setup Pages
         id: Pages
         uses: actions/configure-pages@v3
